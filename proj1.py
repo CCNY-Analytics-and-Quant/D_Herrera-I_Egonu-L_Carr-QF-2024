@@ -47,3 +47,44 @@ for ticker in benchmarks:
     volatility_spread = portfoliovol - annualvol
     
     metrics.append([ticker, correlation, covariance, track_err, sharpe_ratio, volatility_spread])
+
+# Calculate 52-week rolling high and low
+weekly_high = data['Adj Close'].rolling(window=252).max()
+weekly_low = data['Adj Close'].rolling(window=252).min()
+
+# Calculate weekly drawdown
+weekly_drawdown = (weekly_low - weekly_high) / weekly_high
+
+# Average weekly drawdown
+average_weekly_drawdown = weekly_drawdown.mean()
+print("Average Weekly Drawdown:", average_weekly_drawdown)
+
+# Maximum weekly drawdown
+max_weekly_drawdown = weekly_drawdown.min()
+print("Maximum Weekly Drawdown:", max_weekly_drawdown)
+
+# Calculate total return over 10 years
+start_price = data['Adj Close'].iloc[0]  # Starting price 10 years ago
+end_price = data['Adj Close'].iloc[-1]  # Current price
+
+total_return = (end_price / start_price) - 1
+print("Total Return:", total_return)
+
+# Number of trading days in 10 years (approx. 252 trading days per year)
+years = 10
+
+# Calculate annualized total return
+annualized_return = (end_price / start_price) ** (1 / years) - 1
+print("Annualized Return:", annualized_return)
+
+# Assuming 'tickers' contains your assets and 'benchmarks' contains your ETFs
+all_tickers = tickers + benchmarks
+
+# Calculate percentage changes for each asset
+returns = data[all_tickers].pct_change()
+
+# Calculate the correlation matrix
+correlation_matrix = returns.corr()
+
+# Display the correlation matrix
+print(correlation_matrix)
